@@ -5,13 +5,13 @@ var friendsData = require("../data/friends");
 module.exports = function(app) {
     // API GET Requests
   
-    app.get("/api/friends", function(req, res) {
+    app.get("/data/friends", function(req, res) {
       res.json(friendsData);
     });
   
     // API POST Requests
   
-    app.post("/api/friends", function(req, res) {
+    app.post("/data/friends", function(req, res) {
 
       friendsData.push(req.body);
     });
