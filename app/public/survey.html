@@ -215,7 +215,7 @@
             </div>
             <div class="modal-body">
               <h2 id="match-name"></h2>
-              <img id="match-img" src="https://media.licdn.com/mpr/mpr/shrinknp_400_400/p/6/005/064/1bd/3435aa3.jpg" alt="">
+              <img id="match-img">
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -281,17 +281,51 @@
           $.get("/api/friends", function(data) {
             if(data){
               console.log(data)
-              $("#match-name").text(data[1].name);
-              $("#match-img").attr("src", data[1].photo);
-  
+              var n = data.length;
+              //sums store values of difference value of different users
+              var sums = [];
+              //reason of using 'data.length-1', the data[data.length] would be user it self
+              for(i=0;i<data.length-1;i++){
+                var sum = 0;
+                 if (data[i].name != userData.name ||data[i].photo !=userData.photo){
+                    for(j=0;j<10;j++){
+                    sum += Math.abs(data[i].scores[j]-userData.scores[j])
+                 }
+                }else{
+                    //hardcode value of same user, so previous same user not showing
+                    sum = 100;   
+                }
+                 
+                sums.push(sum);
+              } 
+              console.log(sums);
+              //find the smallest value will led us the the most 'like' user
+              var index=0
+              for(i=1;i<sums.length;i++){
+                if (sums[index]>sums[i]){
+                  console.log(sums[index]+" > "+sums[i])
+                  index = i;           
+                }           
+              }
+
+              console.log(index)
+
+              $("#match-name").text("name: "+data[index].name);
+              $("#match-img").attr("src", data[index].photo);
+              $("#match-img").css({"width": "250px"});
                // Show the modal with the best match
                $("#results-modal").modal("toggle");
             }
           });
-          
+           
+           
         } else {
           alert("Please fill out all fields before submitting!");
         }
+
+        //clear form after submition
+        $('input[type="text"]').val('');
+        $("input[type=radio]").each(function () {$(this).prop('checked', false); });
       });
     </script>
 </body>
